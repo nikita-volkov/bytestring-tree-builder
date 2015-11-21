@@ -21,7 +21,7 @@ import qualified Data.ByteString.Lazy.Internal as E
 
 data Builder =
   Empty |
-  Tree !Int {-# UNPACK #-} !(A.BinaryTree ByteString)
+  Tree !Int !(A.BinaryTree ByteString)
 
 instance Monoid Builder where
   {-# INLINE mempty #-}
