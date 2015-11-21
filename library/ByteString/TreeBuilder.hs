@@ -27,22 +27,17 @@ instance Monoid Builder where
   {-# INLINE mempty #-}
   mempty =
     Empty
-  {-# INLINE mappend #-}
+  {-# INLINABLE mappend #-}
   mappend =
-    append
-
-{-# INLINABLE append #-}
-append :: Builder -> Builder -> Builder
-append =
-  \case
-    Empty ->
-      id
-    Tree length1 tree1 ->
-      \case
-        Empty ->
-          Tree length1 tree1
-        Tree length2 tree2 ->
-          Tree (length1 + length2) (A.Branch tree1 tree2)
+    \case
+      Empty ->
+        id
+      Tree length1 tree1 ->
+        \case
+          Empty ->
+            Tree length1 tree1
+          Tree length2 tree2 ->
+            Tree (length1 + length2) (A.Branch tree1 tree2)
 
 {-# INLINE byteString #-}
 byteString :: ByteString -> Builder
