@@ -82,7 +82,7 @@ toByteString =
     Empty ->
       B.empty
     Tree length tree ->
-      C.unsafeCreate length $ \ptr -> void $ A.foldlM (flip D.pokeBytes) ptr tree
+      C.unsafeCreate length $ \ptr -> void $ D.pokeTree tree ptr
 
 {-# INLINABLE toLazyByteString #-}
 toLazyByteString :: Builder -> E.ByteString
