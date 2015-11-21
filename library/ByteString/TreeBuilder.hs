@@ -39,6 +39,13 @@ instance Monoid Builder where
           Tree length2 tree2 ->
             Tree (length1 + length2) (A.Branch tree1 tree2)
 
+instance IsString Builder where
+  fromString string =
+    Tree (B.length bytes) (A.Leaf bytes)
+    where
+      bytes =
+        fromString string
+
 {-# INLINE byteString #-}
 byteString :: ByteString -> Builder
 byteString bytes =
