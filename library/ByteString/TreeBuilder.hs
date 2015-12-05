@@ -17,8 +17,6 @@ import qualified ByteString.TreeBuilder.Prelude as F
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Internal as C
 import qualified Data.ByteString.Lazy.Internal as E
-import qualified Data.ByteString.Internal as G
-import qualified Foreign as H
 
 
 -- |
@@ -82,13 +80,7 @@ length (Builder length tree) =
 toByteString :: Builder -> ByteString
 toByteString (Builder length tree) =
   C.unsafeCreate length $ \ptr -> 
-    void $ A.foldlM step ptr tree
-  where
-    step ptr (G.PS foreignPointer offset length) =
-      do
-        H.withForeignPtr foreignPointer $ \ptr' ->
-          G.memcpy ptr (H.plusPtr ptr' offset) length
-        pure (H.plusPtr ptr length)
+    void $ D.pokeTree tree ptr
 
 -- |
 -- /O(n)/. Converts the builder into a lazy bytestring.

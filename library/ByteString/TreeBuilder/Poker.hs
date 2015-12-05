@@ -5,6 +5,7 @@ import Foreign hiding (void)
 import qualified Data.ByteString as A
 import qualified Data.ByteString.Internal as B
 import qualified Foreign as D
+import qualified ByteString.TreeBuilder.Tree as E
 
 
 -- |
@@ -29,3 +30,10 @@ pokeBytesMinus (B.PS foreignPointer offset length) pointer =
   where
     targetPointer =
       plusPtr pointer (negate length)
+
+pokeTree :: E.Tree -> D.Ptr Word8 -> IO (D.Ptr Word8)
+pokeTree tree ptr =
+  case tree of
+    E.Empty -> pure ptr
+    E.Leaf bytes -> pokeBytes bytes ptr
+    E.Branch tree1 tree2 -> pokeTree tree1 ptr >>= pokeTree tree2
