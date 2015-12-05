@@ -1,7 +1,7 @@
 name:
   bytestring-tree-builder
 version:
-  0.1
+  0.2
 category:
   ByteString
 synopsis:
@@ -42,11 +42,11 @@ library
     Haskell2010
   other-modules:
     ByteString.TreeBuilder.Prelude
-    ByteString.TreeBuilder.BinaryTree
-    ByteString.TreeBuilder.Bytes
+    ByteString.TreeBuilder.Poker
   exposed-modules:
     ByteString.TreeBuilder
   build-depends:
+    chunk-tree >= 0.1.1 && < 0.2,
     bytestring >= 0.10 && < 0.11,
     base-prelude >= 0.1.19 && < 0.2,
     base >= 4.6 && < 5

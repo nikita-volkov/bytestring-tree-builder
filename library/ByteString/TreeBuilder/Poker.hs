@@ -1,10 +1,9 @@
-module ByteString.TreeBuilder.Bytes where
+module ByteString.TreeBuilder.Poker where
 
 import ByteString.TreeBuilder.Prelude
 import Foreign hiding (void)
 import qualified Data.ByteString as A
 import qualified Data.ByteString.Internal as B
-import qualified ByteString.TreeBuilder.BinaryTree as C
 import qualified Foreign as D
 
 
@@ -32,10 +31,3 @@ pokeBytesMinus (B.PS foreignPointer offset length) pointer =
   where
     targetPointer =
       plusPtr pointer (negate length)
-
-{-# INLINE pokeTree #-}
-pokeTree :: C.BinaryTree ByteString -> Ptr Word8 -> IO (Ptr Word8)
-pokeTree tree ptr =
-  case tree of
-    C.Leaf bytes -> pokeBytes bytes ptr
-    C.Branch tree1 tree2 -> pokeTree tree1 ptr >>= pokeTree tree2
