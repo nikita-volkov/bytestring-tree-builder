@@ -10,6 +10,7 @@ import qualified Foreign as H
 
 
 data Tree =
+  Empty |
   Leaf !ByteString |
   Branch !Tree !Tree
 
@@ -17,6 +18,8 @@ data Tree =
 foldl :: (a -> ByteString -> a) -> a -> Tree -> a
 foldl step init =
   \case
+    Empty ->
+      init
     Leaf value ->
       step init value
     Branch tree1 tree2 ->
@@ -26,6 +29,8 @@ foldl step init =
 foldr :: (ByteString -> a -> a) -> a -> Tree -> a
 foldr step init =
   \case
+    Empty ->
+      init
     Leaf value ->
       step value init
     Branch tree1 tree2 ->
@@ -35,6 +40,8 @@ foldr step init =
 foldlM :: Monad m => (a -> ByteString -> m a) -> a -> Tree -> m a
 foldlM step init =
   \case
+    Empty ->
+      pure init
     Leaf value ->
       step init value
     Branch tree1 tree2 ->
