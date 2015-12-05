@@ -11,25 +11,45 @@ module ByteString.TreeBuilder
 where
 
 import ByteString.TreeBuilder.Prelude hiding (foldl, length)
-import qualified ChunkTree as A
+import qualified ByteString.TreeBuilder.Tree as A
 import qualified ByteString.TreeBuilder.Poker as D
+import qualified ByteString.TreeBuilder.Prelude as F
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Internal as C
 import qualified Data.ByteString.Lazy.Internal as E
-import qualified ByteString.TreeBuilder.Prelude as F
+import qualified Data.ByteString.Internal as G
+import qualified Foreign as H
 
 
 -- |
 -- A binary-tree-based datastructure optimized for aggregation of bytestrings.
 -- Implements the appending operation with /O(1)/ complexity.
-newtype Builder =
-  Builder (A.ChunkTree ByteString)
-  deriving (Monoid)
+data Builder =
+  Empty |
+  Tree !Int !A.Tree
+
+-- |
+-- Implements an /O(1)/ `mappend`.
+instance Monoid Builder where
+  {-# INLINE mempty #-}
+  mempty =
+    Empty
+  {-# INLINABLE mappend #-}
+  mappend =
+    \case
+      Empty ->
+        id
+      Tree length1 tree1 ->
+        \case
+          Empty ->
+            Tree length1 tree1
+          Tree length2 tree2 ->
+            Tree (length1 + length2) (A.Branch tree1 tree2)
 
 instance IsString Builder where
   {-# INLINE fromString #-}
   fromString string =
-    Builder (A.chunk (B.length bytes) bytes)
+    Tree (B.length bytes) (A.Leaf bytes)
     where
       bytes =
         fromString string
@@ -39,14 +59,14 @@ instance IsString Builder where
 {-# INLINE byteString #-}
 byteString :: ByteString -> Builder
 byteString bytes =
-  Builder (A.chunk (B.length bytes) bytes)
+  Tree (B.length bytes) (A.Leaf bytes)
 
 -- |
 -- Lifts a single bytestring into the builder.
 {-# INLINE byte #-}
 byte :: Word8 -> Builder
 byte byte =
-  Builder (A.chunk 1 (B.singleton byte))
+  Tree 1 (A.Leaf (B.singleton byte))
 
 -- * Execution
 -------------------------
@@ -55,23 +75,41 @@ byte byte =
 -- Performs a left-fold over the chunks of which the builder consists.
 {-# INLINE foldl #-}
 foldl :: (a -> ByteString -> a) -> a -> Builder -> a
-foldl step init (Builder chunkTree) =
-  A.foldl step init chunkTree
+foldl step init =
+  \case
+    Empty ->
+      init
+    Tree length tree ->
+      A.foldl step init tree
 
 -- |
 -- /O(1)/. Gets the total length.
 {-# INLINE length #-}
 length :: Builder -> Int
-length (Builder chunkTree) =
-  A.length chunkTree
+length =
+  \case
+    Empty ->
+      0
+    Tree length _ ->
+      length
 
 -- |
 -- /O(n)/. Converts the builder into a strict bytestring.
 {-# INLINABLE toByteString #-}
 toByteString :: Builder -> ByteString
-toByteString (Builder chunkTree) =
-  C.unsafeCreate (A.length chunkTree) $ \ptr -> 
-    void $ A.foldlM (flip D.pokeBytes) ptr chunkTree
+toByteString =
+  \case
+    Empty ->
+      B.empty
+    Tree length tree ->
+      C.unsafeCreate length $ \ptr -> 
+        void $ A.foldlM step ptr tree
+  where
+    step ptr (G.PS foreignPointer offset length) =
+      do
+        H.withForeignPtr foreignPointer $ \ptr' ->
+          G.memcpy ptr (H.plusPtr ptr' offset) length
+        pure (H.plusPtr ptr length)
 
 -- |
 -- /O(n)/. Converts the builder into a lazy bytestring.
