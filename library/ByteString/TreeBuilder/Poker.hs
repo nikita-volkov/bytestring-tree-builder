@@ -10,7 +10,6 @@ import qualified Foreign as D
 -- |
 -- Write the given bytes into the pointer and
 -- return a pointer incremented by the amount of written bytes.
-{-# INLINE pokeBytes #-}
 pokeBytes :: ByteString -> Ptr Word8 -> IO (Ptr Word8)
 pokeBytes (B.PS foreignPointer offset length) pointer =
   do
@@ -21,7 +20,6 @@ pokeBytes (B.PS foreignPointer offset length) pointer =
 -- |
 -- Write the given bytes into the pointer and
 -- return a pointer decremented by the amount of written bytes.
-{-# INLINE pokeBytesMinus #-}
 pokeBytesMinus :: ByteString -> Ptr Word8 -> IO (Ptr Word8)
 pokeBytesMinus (B.PS foreignPointer offset length) pointer =
   do
