@@ -20,13 +20,13 @@ import qualified Data.ByteString.Lazy.Internal as E
 
 
 -- |
--- A binary-tree-based datastructure optimized for aggregation of bytestrings.
--- Implements the appending operation with /O(1)/ complexity.
+-- A binary-tree-based datastructure optimized for aggregation of bytestrings
+-- using the /O(1)/ appending operation.
 data Builder =
   Builder !Int !A.Tree
 
 -- |
--- Implements an /O(1)/ `mappend`.
+-- Implements `mappend` with /O(1)/ complexity.
 instance Monoid Builder where
   {-# INLINE mempty #-}
   mempty =
@@ -51,7 +51,7 @@ byteString bytes =
   Builder (B.length bytes) (A.Leaf bytes)
 
 -- |
--- Lifts a single bytestring into the builder.
+-- Lifts a single byte into the builder.
 {-# INLINE byte #-}
 byte :: Word8 -> Builder
 byte byte =
@@ -61,7 +61,7 @@ byte byte =
 -------------------------
 
 -- |
--- Performs a left-fold over the chunks of which the builder consists.
+-- Performs a left-fold over the aggregated chunks.
 {-# INLINE foldl #-}
 foldl :: (a -> ByteString -> a) -> a -> Builder -> a
 foldl step init (Builder length tree) =
