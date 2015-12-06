@@ -41,7 +41,7 @@ foldlM :: Monad m => (a -> ByteString -> m a) -> a -> Tree -> m a
 foldlM step init =
   \case
     Empty ->
-      pure init
+      return init
     Leaf value ->
       step init value
     Branch tree1 tree2 ->
