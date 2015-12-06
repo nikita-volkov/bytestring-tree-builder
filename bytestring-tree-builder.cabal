@@ -1,16 +1,16 @@
 name:
   bytestring-tree-builder
 version:
-  0.2.1.1
+  0.2.1.2
 category:
   ByteString
 synopsis:
   A very efficient ByteString builder implementation based on the binary tree
 description:
   According to
-  <https://github.com/nikita-volkov/bytestring-builders-benchmark benchmarks>
-  this builder implementation beats all the alternative implementations.
-  It is especially well-suited for producing strict bytestrings,
+  <https://github.com/nikita-volkov/bytestring-builders-benchmark the benchmarks>
+  this builder implementation beats all the alternatives.
+  It is especially well-suited for generating strict bytestrings,
   beating the standard builder by at least the factor of 4.
 homepage:
   https://github.com/nikita-volkov/bytestring-tree-builder 
