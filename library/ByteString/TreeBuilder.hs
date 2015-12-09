@@ -5,6 +5,7 @@ module ByteString.TreeBuilder
   byteString,
   byte,
   -- * Execution
+  length,
   toByteString,
   toLazyByteString,
 )
