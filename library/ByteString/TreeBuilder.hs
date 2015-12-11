@@ -11,7 +11,7 @@ module ByteString.TreeBuilder
 )
 where
 
-import ByteString.TreeBuilder.Prelude hiding (foldl, length)
+import ByteString.TreeBuilder.Prelude hiding (foldl, foldr, length)
 import qualified ByteString.TreeBuilder.Tree as A
 import qualified ByteString.TreeBuilder.Poker as D
 import qualified ByteString.TreeBuilder.Prelude as F
@@ -69,6 +69,13 @@ foldl step init (Builder length tree) =
   A.foldl step init tree
 
 -- |
+-- Performs a right-fold over the aggregated chunks.
+{-# INLINE foldr #-}
+foldr :: (ByteString -> a -> a) -> a -> Builder -> a
+foldr step init (Builder length tree) =
+  A.foldr step init tree
+
+-- |
 -- /O(1)/. Gets the total length.
 {-# INLINE length #-}
 length :: Builder -> Int
@@ -88,4 +95,4 @@ toByteString (Builder length tree) =
 {-# INLINABLE toLazyByteString #-}
 toLazyByteString :: Builder -> E.ByteString
 toLazyByteString =
-  foldl (flip E.Chunk) E.Empty
+  foldr E.Chunk E.Empty
