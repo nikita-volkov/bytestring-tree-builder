@@ -36,6 +36,8 @@ instance Monoid Builder where
   mappend (Builder length1 tree1) (Builder length2 tree2) =
     Builder (length1 + length2) (A.Branch tree1 tree2)
 
+instance Semigroup Builder
+
 instance IsString Builder where
   {-# INLINE fromString #-}
   fromString string =

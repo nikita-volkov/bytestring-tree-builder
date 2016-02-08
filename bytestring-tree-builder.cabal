@@ -1,7 +1,7 @@
 name:
   bytestring-tree-builder
 version:
-  0.2.2.1
+  0.2.3
 category:
   ByteString
 synopsis:
@@ -54,6 +54,7 @@ library
   exposed-modules:
     ByteString.TreeBuilder
   build-depends:
+    semigroups >= 0.18 && < 0.19,
     bytestring >= 0.10 && < 0.11,
     base-prelude >= 0.1.19 && < 0.2,
     base >= 4.6 && < 5
