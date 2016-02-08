@@ -2,8 +2,16 @@ module ByteString.TreeBuilder
 (
   Builder,
   -- * Declaration
+  -- ** Primitives
   byteString,
   byte,
+  -- ** Extras
+  asciiIntegral,
+  asciiChar,
+  utf8Char,
+  utf8Ord,
+  utf8Text,
+  utf8LazyText,
   -- * Execution
   length,
   toByteString,
@@ -18,6 +26,8 @@ import qualified ByteString.TreeBuilder.Prelude as F
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Internal as C
 import qualified Data.ByteString.Lazy.Internal as E
+import qualified Data.Text
+import qualified Data.Text.Lazy
 
 
 -- |
@@ -46,6 +56,13 @@ instance IsString Builder where
       bytes =
         fromString string
 
+
+-- * Declaration
+-------------------------
+
+-- ** Primitives
+-------------------------
+
 -- |
 -- Lifts a bytestring into the builder.
 {-# INLINE byteString #-}
@@ -59,6 +76,73 @@ byteString bytes =
 byte :: Word8 -> Builder
 byte byte =
   Builder 1 (A.Leaf (B.singleton byte))
+
+-- ** Extras
+-------------------------
+
+{-# INLINABLE asciiIntegral #-}
+asciiIntegral :: Integral a => a -> Builder
+asciiIntegral =
+  \case
+    0 ->
+      byte 48
+    x ->
+      bool ((<>) (byte 45)) id (x >= 0) $
+      loop mempty $
+      abs x
+  where
+    loop builder remainder =
+      case remainder of
+        0 ->
+          builder
+        _ ->
+          case quotRem remainder 10 of
+            (quot, rem) ->
+              loop (byte (48 + fromIntegral rem) <> builder) quot
+
+{-# INLINE asciiChar #-}
+asciiChar :: Char -> Builder
+asciiChar =
+  byte . fromIntegral . ord
+
+{-# INLINE utf8Char #-}
+utf8Char :: Char -> Builder
+utf8Char =
+  utf8Ord . ord
+
+{-# INLINE utf8Ord #-}
+utf8Ord :: Int -> Builder
+utf8Ord x =
+  if x <= 0x7F
+    then
+      byte (fromIntegral x)
+    else 
+      if x <= 0x07FF
+        then
+          byte (fromIntegral ((x `shiftR` 6) + 0xC0)) <>
+          byte (fromIntegral ((x .&. 0x3F) + 0x80))
+        else
+          if x <= 0xFFFF
+            then
+              byte (fromIntegral (x `shiftR` 12) + 0xE0) <>
+              byte (fromIntegral ((x `shiftR` 6) .&. 0x3F) + 0x80) <>
+              byte (fromIntegral (x .&. 0x3F) + 0x80)
+            else
+              byte (fromIntegral (x `shiftR` 18) + 0xF0) <>
+              byte (fromIntegral ((x `shiftR` 12) .&. 0x3F) + 0x80) <>
+              byte (fromIntegral ((x `shiftR` 6) .&. 0x3F) + 0x80) <>
+              byte (fromIntegral (x .&. 0x3F) + 0x80)
+
+{-# INLINE utf8Text #-}
+utf8Text :: Data.Text.Text -> Builder
+utf8Text =
+  Data.Text.foldl' (\builder -> mappend builder . utf8Char) mempty
+
+{-# INLINE utf8LazyText #-}
+utf8LazyText :: Data.Text.Lazy.Text -> Builder
+utf8LazyText =
+  Data.Text.Lazy.foldl' (\builder -> mappend builder . utf8Char) mempty
+
 
 -- * Execution
 -------------------------
