@@ -45,8 +45,14 @@ instance Monoid Builder where
   {-# INLINABLE mappend #-}
   mappend (Builder length1 tree1) (Builder length2 tree2) =
     Builder (length1 + length2) (A.Branch tree1 tree2)
+  {-# INLINE mconcat #-}
+  mconcat =
+    foldl' mappend mempty
 
-instance Semigroup Builder
+instance Semigroup Builder where
+  {-# INLINE sconcat #-}
+  sconcat =
+    foldl' mappend mempty
 
 instance IsString Builder where
   {-# INLINE fromString #-}
