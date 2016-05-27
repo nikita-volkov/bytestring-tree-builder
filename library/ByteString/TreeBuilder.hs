@@ -12,6 +12,7 @@ module ByteString.TreeBuilder
   utf8Ord,
   utf8Text,
   utf8LazyText,
+  intercalate,
   -- * Execution
   length,
   toByteString,
@@ -19,7 +20,7 @@ module ByteString.TreeBuilder
 )
 where
 
-import ByteString.TreeBuilder.Prelude hiding (foldl, foldr, length)
+import ByteString.TreeBuilder.Prelude hiding (foldl, foldr, length, intercalate)
 import qualified ByteString.TreeBuilder.Tree as A
 import qualified ByteString.TreeBuilder.Poker as D
 import qualified ByteString.TreeBuilder.Prelude as F
@@ -148,6 +149,12 @@ utf8Text =
 utf8LazyText :: Data.Text.Lazy.Text -> Builder
 utf8LazyText =
   Data.Text.Lazy.foldl' (\builder -> mappend builder . utf8Char) mempty
+
+{-# INLINABLE intercalate #-}
+intercalate :: (Foldable f, Monoid m) => m -> f m -> m
+intercalate incut =
+  fst .
+  foldl' (\(acc, incutFn) x -> (incutFn (mappend x acc), mappend incut)) (mempty, id)
 
 
 -- * Execution
