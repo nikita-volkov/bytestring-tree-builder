@@ -55,6 +55,9 @@ instance Semigroup Builder where
   sconcat =
     foldl' mappend mempty
 
+  {-# INLINABLE (<>) #-}
+  (<>) = mappend
+
 instance IsString Builder where
   {-# INLINE fromString #-}
   fromString string =
