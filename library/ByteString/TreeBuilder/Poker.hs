@@ -34,6 +34,13 @@ pokeBytesMinus (B.PS foreignPointer offset length) pointer =
 pokeTree :: E.Tree -> D.Ptr Word8 -> IO (D.Ptr Word8)
 pokeTree tree ptr =
   case tree of
-    E.Empty -> pure ptr
     E.Leaf bytes -> pokeBytes bytes ptr
-    E.Branch tree1 tree2 -> pokeTree tree1 ptr >>= pokeTree tree2
+    E.Branch tree1 tree2 -> pokeTreeOnBranch tree1 tree2 ptr
+    E.Empty -> pure ptr
+
+pokeTreeOnBranch :: E.Tree -> E.Tree -> D.Ptr Word8 -> IO (D.Ptr Word8)
+pokeTreeOnBranch a b ptr =
+  case a of
+    E.Branch c d -> pokeTreeOnBranch c (E.Branch d b) ptr
+    E.Leaf bytes -> pokeBytes bytes ptr >>= pokeTree b
+    E.Empty -> pure ptr
