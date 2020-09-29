@@ -36,8 +36,10 @@ library
     base >=4.6 && <5,
     base-prelude <2,
     bytestring >=0.10 && <0.11,
-    semigroups >=0.18 && <0.20,
     text >=1 && <2
+  if impl(ghc < 8.0)
+    build-depends:
+      semigroups >=0.18 && <0.20
 
 benchmark benchmark
   type: exitcode-stdio-1.0
