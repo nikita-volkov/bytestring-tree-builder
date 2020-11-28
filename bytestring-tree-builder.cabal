@@ -69,8 +69,8 @@ test-suite tasty
     base-prelude,
     bytestring,
     bytestring-tree-builder,
-    QuickCheck >=2.8.1 && <3,
-    quickcheck-instances >=0.3.11 && <0.4,
-    tasty >=0.12 && <2,
-    tasty-hunit >=0.9 && <0.11,
-    tasty-quickcheck >=0.9 && <0.11
+    QuickCheck >=2.14 && <3,
+    quickcheck-instances >=0.3.25 && <0.4,
+    tasty >=1.4 && <2,
+    tasty-hunit >=0.10 && <0.11,
+    tasty-quickcheck >=0.10 && <0.11
