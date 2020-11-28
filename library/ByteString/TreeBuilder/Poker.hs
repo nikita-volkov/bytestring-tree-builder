@@ -43,4 +43,4 @@ pokeTreeOnBranch a b ptr =
   case a of
     E.Branch c d -> pokeTreeOnBranch c (E.Branch d b) ptr
     E.Leaf bytes -> pokeBytes bytes ptr >>= pokeTree b
-    E.Empty -> pure ptr
+    E.Empty -> pokeTree b ptr
