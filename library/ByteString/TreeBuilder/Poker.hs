@@ -1,12 +1,10 @@
 module ByteString.TreeBuilder.Poker where
 
 import ByteString.TreeBuilder.Prelude
-import Foreign hiding (void)
-import qualified Data.ByteString as A
-import qualified Data.ByteString.Internal as B
-import qualified Foreign as D
 import qualified ByteString.TreeBuilder.Tree as E
-
+import qualified Data.ByteString.Internal as B
+import Foreign hiding (void)
+import qualified Foreign as D
 
 -- |
 -- Write the given bytes into the pointer and
