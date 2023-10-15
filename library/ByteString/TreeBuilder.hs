@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 module ByteString.TreeBuilder
 (
   Builder,
@@ -43,9 +44,10 @@ instance Monoid Builder where
   {-# INLINE mempty #-}
   mempty =
     Builder 0 A.Empty
+#if !(MIN_VERSION_base(4,11,0))
   {-# INLINABLE mappend #-}
-  mappend (Builder length1 tree1) (Builder length2 tree2) =
-    Builder (length1 + length2) (A.Branch tree1 tree2)
+  mappend = (<>)
+#endif
   {-# INLINE mconcat #-}
   mconcat =
     foldl' mappend mempty
@@ -56,7 +58,8 @@ instance Semigroup Builder where
     foldl' mappend mempty
 
   {-# INLINABLE (<>) #-}
-  (<>) = mappend
+  (Builder length1 tree1) <> (Builder length2 tree2) =
+    Builder (length1 + length2) (A.Branch tree1 tree2)
 
 instance IsString Builder where
   {-# INLINE fromString #-}

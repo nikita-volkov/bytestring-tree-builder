@@ -15,7 +15,7 @@ pokeBytes :: ByteString -> Ptr Word8 -> IO (Ptr Word8)
 pokeBytes (B.PS foreignPointer offset length) pointer =
   do
     withForeignPtr foreignPointer $ \pointer' ->
-      B.memcpy pointer (plusPtr pointer' offset) length
+      copyBytes pointer (plusPtr pointer' offset) length
     pure (plusPtr pointer length)
 
 -- |
@@ -25,7 +25,7 @@ pokeBytesMinus :: ByteString -> Ptr Word8 -> IO (Ptr Word8)
 pokeBytesMinus (B.PS foreignPointer offset length) pointer =
   do
     withForeignPtr foreignPointer $ \pointer' ->
-      B.memcpy targetPointer (plusPtr pointer' offset) length
+      copyBytes targetPointer (plusPtr pointer' offset) length
     pure targetPointer
   where
     targetPointer =
