@@ -1,7 +1,3 @@
 packages: .
-allow-newer:
-  , *:base
-  , *:bytestring
-  , *:deepseq
-  , *:primitive
-  , *:text
+constraints:
+  , bytestring >=0.12
