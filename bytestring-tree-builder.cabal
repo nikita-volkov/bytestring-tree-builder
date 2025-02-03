@@ -24,7 +24,7 @@ license-file:  LICENSE
 
 source-repository head
   type:     git
-  location: git://github.com/nikita-volkov/bytestring-tree-builder.git
+  location: https://github.com/nikita-volkov/bytestring-tree-builder
 
 common base
   default-language:   Haskell2010
